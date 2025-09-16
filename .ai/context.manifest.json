@@ -1,0 +1,13 @@
+{
+  "include": [
+    "guidelines.md",
+    ".spec/spec.md",
+    ".spec/plan.md",
+    ".spec/api.yaml",
+    ".spec/tasks.json",
+    ".spec/diagrams/architecture.puml",
+    ".spec/diagrams/dev-playbook.puml",
+    ".aiignore"
+  ],
+  "notes": "Bundle these into one file and attach as context to the agent."
+}
