@@ -19,7 +19,8 @@
     "spec:pack": "node .spec/scripts/pack-context.js",
     "spec:gen": "uvx --from git+https://github.com/github/spec-kit.git specify tasks --format json > .spec/_gen_tasks.json",
     "spec:diff": "diff -u .spec/tasks.json .spec/_gen_tasks.json || (echo '\\n❌ Spec tasks changed. Run `npm run spec:update` if you INTEND to accept the changes.' && exit 1)",
-    "spec:update": "mv .spec/_gen_tasks.json .spec/tasks.json"
+    "spec:update": "mv .spec/_gen_tasks.json .spec/tasks.json",
+    "ai:pack": "node .ai/bin/pack-context.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
