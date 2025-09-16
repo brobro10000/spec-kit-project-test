@@ -1,0 +1,79 @@
+@startuml
+title MovieWatchlist - Project Layout & Request Flow
+
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam ArrowColor #888
+
+actor User
+
+package "frontend/" #LightSkyBlue {
+  component "src/App.tsx" as FE_App
+  component "src/routes/\nMoviesPage.tsx" as FE_Page
+  component "src/components/\nMovieForm.tsx" as FE_Form
+  component "src/components/\nMovieList.tsx" as FE_List
+  component "src/lib/apiClient.ts" as FE_Api
+  component "src/lib/validation.ts" as FE_Zod
+  component "src/store/watchlistStore.ts" as FE_Store
+}
+
+package "backend/" #LightGreen {
+  component "src/server.ts" as BE_Server
+  component "src/routes/movies.router.ts" as BE_Router
+  component "src/controllers/movies.controller.ts" as BE_Ctrl
+  component "src/services/movies.service.ts" as BE_Svc
+  component "src/repo/movies.repo.ts" as BE_Repo
+}
+
+database "sqlite.db" as DB #LightGray
+component "src/db/connection.ts" as BE_DBConn #LightGray
+
+' ---- High-level flow ----
+User --> FE_App : uses SPA
+FE_App --> FE_Page
+FE_Page --> FE_Form
+FE_Page --> FE_List
+
+' API calls from the frontend
+FE_Api -down-> BE_Server : HTTP (fetch/TanStack Query)
+BE_Server --> BE_Router : route matching /api/movies
+BE_Router --> BE_Ctrl : validate & map DTOs
+BE_Ctrl --> BE_Svc : business logic
+BE_Svc --> BE_Repo : persistence calls
+BE_Repo --> BE_DBConn : SQL (better-sqlite3)
+BE_DBConn --> DB
+
+' Validation on both sides
+FE_Form --> FE_Zod : form schema
+BE_Ctrl --> FE_Zod : (shared zod types via `@types` if desired)
+
+' Optional client state helpers
+FE_Page --> FE_Store : local UI state (filters, modal toggles)
+
+' ---- Files / directories (as notes) ----
+note right of FE_App
+frontend/
+  src/
+    App.tsx
+    routes/MoviesPage.tsx
+    components/MovieForm.tsx
+    components/MovieList.tsx
+    lib/apiClient.ts
+    lib/validation.ts (zod schemas)
+    store/watchlistStore.ts (zustand)
+    main.tsx
+end note
+
+note right of BE_Server
+backend/
+  src/
+    server.ts (express boot)
+    routes/movies.router.ts
+    controllers/movies.controller.ts
+    services/movies.service.ts
+    repo/movies.repo.ts
+    db/connection.ts
+  sqlite.db (ignored until created)
+end note
+
+@enduml
