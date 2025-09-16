@@ -17,8 +17,8 @@
     "preview": "vite preview",
     "test": "echo \"No tests specified\" && exit 0",
     "spec:pack": "node .spec/scripts/pack-context.js",
-    "spec:gen": "specify tasks --format json > .spec/_gen_tasks.json",
-    "spec:diff": "diff -u .spec/tasks.json .spec/_gen_tasks.json || (echo '\\n❌ Spec tasks have changed. Run `npm run spec:gen` and commit updates with `npm run spec:update`.' && exit 1)",
+    "spec:gen": "uvx --from git+https://github.com/github/spec-kit.git specify tasks --format json > .spec/_gen_tasks.json",
+    "spec:diff": "diff -u .spec/tasks.json .spec/_gen_tasks.json || (echo '\\n❌ Spec tasks changed. Run `npm run spec:update` if you INTEND to accept the changes.' && exit 1)",
     "spec:update": "mv .spec/_gen_tasks.json .spec/tasks.json"
   },
   "dependencies": {
