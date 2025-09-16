@@ -1,0 +1,97 @@
+openapi: 3.1.0
+info: { title: MovieWatchlist API, version: "1.0.0" }
+paths:
+  /api/movies:
+    get:
+      parameters:
+        - in: query
+          name: search
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  movies:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Movie"
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateMovie" }
+      responses:
+        "201": { description: Created }
+        "400": { $ref: "#/components/responses/BadRequest" }
+  /api/movies/{id}:
+    patch:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateMovie" }
+      responses:
+        "200": { description: OK }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "204": { description: No Content }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+components:
+  schemas:
+    Movie:
+      type: object
+      required: [id, title, watched]
+      properties:
+        id: { type: integer }
+        title: { type: string, minLength: 1 }
+        year: { type: integer, minimum: 1888, maximum: 2100, nullable: true }
+        watched: { type: boolean }
+        rating: { type: integer, minimum: 1, maximum: 5, nullable: true }
+        created_at: { type: string, format: date-time }
+    CreateMovie:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string, minLength: 1 }
+        year: { type: integer, minimum: 1888, maximum: 2100, nullable: true }
+    UpdateMovie:
+      type: object
+      properties:
+        watched: { type: boolean }
+        rating: { type: integer, minimum: 1, maximum: 5, nullable: true }
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string }
+              details: {}
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string }

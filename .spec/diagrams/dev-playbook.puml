@@ -1,0 +1,58 @@
+@startuml
+title Development Playbook - Task Lifecycle & Guardrails
+
+start
+:Pick ONE task from .spec/tasks.json;
+:Create branch "feat/<TaskID>-<slug>";
+:Read .spec/spec.md, plan.md, api.yaml;
+
+if (OpenAPI present?) then (yes)
+  :Generate TS types / validate contracts;
+else (no)
+  :Mirror DTOs with Zod schema;
+endif
+
+:Implement minimal changes scoped to TaskID;
+:Add/Update unit tests for changed code only;
+:Run local checks (lint, typecheck, tests);
+
+if (All local checks pass?) then (yes)
+  :Update CHANGELOG with TaskID;
+  :Commit with "Txx: short summary";
+  :Open Draft PR titled "Txx: <title>";
+else (no)
+  :Fix until green;
+  --> [back] :Run local checks (lint, typecheck, tests);
+endif
+
+:CI runs spec discipline;
+fork
+  :spec:gen & diff (no drift);
+end fork
+fork
+  :Require TaskID in PR title/body;
+end fork
+fork
+  :API contract check (OpenAPI vs code);
+end fork
+fork
+  :Test & coverage gates;
+end fork
+
+if (CI all green?) then (yes)
+  :Request review;
+  if (Reviewer approves?) then (yes)
+    :Merge with squash;
+    :Delete branch;
+    :Mark TaskID done (issue/board);
+  else (changes requested)
+    :Address review feedback;
+    --> [back] :Run local checks (lint, typecheck, tests);
+  endif
+else (no)
+  :Fix failing gates;
+  --> [back] :Run local checks (lint, typecheck, tests);
+endif
+
+stop
+@enduml

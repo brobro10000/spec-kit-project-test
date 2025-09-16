@@ -1,0 +1,12 @@
+{
+  "include": [
+    ".spec/spec.md",
+    ".spec/plan.md",
+    ".spec/api.yaml",
+    ".spec/tasks.json",
+    ".spec/diagrams/project-layout.puml",
+    ".spec/diagrams/dev-playbook.puml",
+    ".spec/diagrams/crud-sequence.puml"
+  ],
+  "notes": "Agents should prefer the PUML *source text* over images."
+}
