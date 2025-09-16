@@ -1,20 +1,25 @@
 [
   {
     "id": "T00",
+    "title": "Adopt Mantine design system",
+    "description": "Install Mantine (@mantine/core, @mantine/hooks, @mantine/notifications, @mantine/modals, @mantine/form, @tabler/icons-react). Wire a MantineProvider with a base theme (primary color, radius, spacing) and add Notifications + ModalsProvider at the app root. Create src/theme/mantine.ts with exported theme tokens. Replace one existing view’s ad-hoc UI with Mantine components (e.g., AppShell header + one form using TextInput, Button). Add a color-scheme (light/dark) toggle. Update guidelines.md with a short Mantine policy.\n\nAcceptance:\n- App boots with MantineProvider and shows consistent styling.\n- Notifications and Modals work (demo button or an existing flow).\n- One existing screen uses Mantine components (no raw CSS for those elements).\n- Theme tokens live in src/theme/mantine.ts and are referenced.\n- Light/dark toggle present and persists for the session.\n- Lint + type-check pass; minimal tests cover the new UI behavior (render and basic interactions).\n\nConstraints:\n- Only touch files under src/**, and minimal changes to entry files (e.g., src/main.tsx).\n- No other UI libraries introduced.\n- Do not edit .spec/*."
+  },
+  {
+    "id": "T01",
     "title": "Read spec + plan + diagrams",
     "description": "Summarize system boundaries from project-layout.puml and list files you will create/modify for the next task.",
     "deliverable": "A COMMENT in the PR body that quotes relevant lines from the PUML and maps them to implementation steps."
   },
-  { "id": "T01", "title": "Backend scaffold (Express + TS)", "description": "Init BE project, tsconfig, eslint, nodemon, health route /health." },
-  { "id": "T02", "title": "SQLite init & repo layer", "description": "Create db file, migration for movies table, repo functions: list(search), create, update, delete." },
-  { "id": "T03", "title": "Controllers + routes + validation", "description": "Wire routes, map DTOs, return proper codes and error shape." },
-  { "id": "T04", "title": "Backend tests", "description": "Unit tests for repo/service/controller; seed a tmp DB in tests." },
-  { "id": "T05", "title": "Frontend scaffold (Vite + TS)", "description": "Init FE project, Vite proxy to :3000, basic layout." },
-  { "id": "T06", "title": "API client + types", "description": "Fetch helpers for GET/POST/PATCH/DELETE; inferred types from OpenAPI if possible." },
-  { "id": "T07", "title": "Movies page + list", "description": "TanStack Query for list/search; empty/loaded/error states." },
-  { "id": "T08", "title": "Create form with Zod + RHF", "description": "Client validation mirrors server; show inline errors." },
-  { "id": "T09", "title": "Watched toggle + rating control", "description": "Disable rating until watched=true; PATCH flow + optimistic UI." },
-  { "id": "T10", "title": "Delete movie", "description": "Confirm then DELETE; update cache." },
-  { "id": "T11", "title": "Frontend tests", "description": "Vitest + @testing-library for form and list happy paths." },
-  { "id": "T12", "title": "README & DX polish", "description": "Add run/test scripts, seed script, and troubleshooting." }
+  { "id": "T02", "title": "Backend scaffold (Express + TS)", "description": "Init BE project, tsconfig, eslint, nodemon, health route /health." },
+  { "id": "T03", "title": "SQLite init & repo layer", "description": "Create db file, migration for movies table, repo functions: list(search), create, update, delete." },
+  { "id": "T04", "title": "Controllers + routes + validation", "description": "Wire routes, map DTOs, return proper codes and error shape." },
+  { "id": "T05", "title": "Backend tests", "description": "Unit tests for repo/service/controller; seed a tmp DB in tests." },
+  { "id": "T06", "title": "Frontend scaffold (Vite + TS)", "description": "Init FE project, Vite proxy to :3000, basic layout." },
+  { "id": "T07", "title": "API client + types", "description": "Fetch helpers for GET/POST/PATCH/DELETE; inferred types from OpenAPI if possible." },
+  { "id": "T08", "title": "Movies page + list", "description": "TanStack Query for list/search; empty/loaded/error states." },
+  { "id": "T09", "title": "Create form with Zod + RHF", "description": "Client validation mirrors server; show inline errors." },
+  { "id": "T10", "title": "Watched toggle + rating control", "description": "Disable rating until watched=true; PATCH flow + optimistic UI." },
+  { "id": "T11", "title": "Delete movie", "description": "Confirm then DELETE; update cache." },
+  { "id": "T12", "title": "Frontend tests", "description": "Vitest + @testing-library for form and list happy paths." },
+  { "id": "T13", "title": "README & DX polish", "description": "Add run/test scripts, seed script, and troubleshooting." }
 ]
