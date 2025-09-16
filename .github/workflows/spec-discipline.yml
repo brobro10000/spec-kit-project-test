@@ -1,0 +1,137 @@
+name: spec-discipline
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+  push:
+    branches: [main, trunk, develop]
+
+concurrency:
+  group: spec-discipline-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  spec-tasks:
+    name: Spec tasks validation (no regeneration)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node (from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      # Optional: sanity-check Spec Kit CLI presence. This does NOT generate tasks.
+      - name: (Optional) Spec Kit sanity check
+        shell: bash
+        run: |
+          set -e
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          # Run 'specify check' but don't fail the build if it’s not available
+          if ! uvx --from git+https://github.com/github/spec-kit.git specify check; then
+            echo "::warning::Spec Kit 'check' failed or CLI not available. This does not block the build."
+          fi
+
+      - name: Validate .spec/tasks.json structure
+        run: |
+          set -e
+          if [ ! -f .spec/tasks.json ]; then
+            echo "::error file=.spec/tasks.json::Missing committed tasks.json. Create and commit .spec/tasks.json first."
+            exit 1
+          fi
+
+          # Validate with Node (IDs, titles, duplicates)
+          node - <<'JS'
+          const fs = require('fs');
+          const path = '.spec/tasks.json';
+          let data;
+          try {
+            data = JSON.parse(fs.readFileSync(path, 'utf8'));
+          } catch (e) {
+            console.error(`::error file=${path}::Invalid JSON: ${e.message}`);
+            process.exit(1);
+          }
+          if (!Array.isArray(data)) {
+            console.error(`::error file=${path}::Root must be an array`);
+            process.exit(1);
+          }
+          const idRe = /^T\d{2,}$/i;
+          const seen = new Set();
+          let ok = true;
+          data.forEach((t, i) => {
+            const loc = `${path}#${i}`;
+            if (!t || typeof t !== 'object') {
+              console.error(`::error file=${loc}::Task must be an object`);
+              ok = false; return;
+            }
+            if (typeof t.id !== 'string' || !idRe.test(t.id)) {
+              console.error(`::error file=${loc}::Task.id missing or not like T01/T12 (got: ${String(t.id)})`);
+              ok = false;
+            } else if (seen.has(t.id)) {
+              console.error(`::error file=${loc}::Duplicate Task.id ${t.id}`);
+              ok = false;
+            } else {
+              seen.add(t.id);
+            }
+            if (typeof t.title !== 'string' || !t.title.trim()) {
+              console.error(`::error file=${loc}::Task.title missing or empty`);
+              ok = false;
+            }
+            // Optional: warn on missing description
+            if (t.description !== undefined && typeof t.description !== 'string') {
+              console.warn(`::warning file=${loc}::Task.description should be a string if present`);
+            }
+          });
+          if (!ok) process.exit(1);
+          console.log('✅ .spec/tasks.json is structurally valid.');
+          JS
+
+  pr-lint:
+    name: PR must reference Task ID (e.g., T03)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce Task ID in PR title/body
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title || '';
+            const body = context.payload.pull_request.body || '';
+            const ok = /(T\d{2,})/i.test(title) || /(T\d{2,})/i.test(body);
+            if (!ok) core.setFailed('PR must include a Task ID like T03 in the title or body.');
+
+  openapi:
+    name: Validate OpenAPI (optional)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check if .spec/api.yaml exists
+        id: has_api
+        run: |
+          if [ -f ".spec/api.yaml" ]; then
+            echo "has_api=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_api=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Lint OpenAPI with Redocly
+        if: steps.has_api.outputs.has_api == 'true'
+        run: |
+          npx --yes @redocly/cli@latest lint .spec/api.yaml
+
+  diagrams:
+    name: Diagrams sanity (optional)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure core PUMLs exist
+        run: |
+          test -f .spec/diagrams/architecture.puml
+          test -f .spec/diagrams/dev-playbook.puml
+      - name: Encourage spec.md to embed diagram image
+        run: |
+          if ! grep -q "diagrams/architecture.png" .spec/spec.md; then
+            echo "::warning file=.spec/spec.md::Consider embedding diagrams/architecture.png for reviewer readability."
+          fi
