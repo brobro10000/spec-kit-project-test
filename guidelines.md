@@ -113,6 +113,12 @@ This is a React application built with Vite and TypeScript, featuring a Node.js 
 4. Run local lint, type-check, and tests before pushing code.
 5. Update `guidelines.md` if new patterns emerge.
 
+## Design System (Mantine)
+- Prefer Mantine components for UI (@mantine/core, @mantine/hooks).
+- Use @mantine/form for simple forms; combine with existing validators if needed.
+- Use @mantine/notifications for toasts and @mantine/modals for confirmations.
+- Keep tokens in `src/theme/mantine.ts`; avoid ad-hoc CSS.
+
 ## Testing Strategy
 - Unit tests for utilities and hooks
 - Integration tests for API endpoints
