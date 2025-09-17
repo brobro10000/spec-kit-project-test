@@ -21,9 +21,13 @@ SEQUENTIAL TASK SELECTION (must follow exactly)
         - If it prints `origin/<branch>`, defaultBranch is `<branch>`. Otherwise use `main`.
 
 2) Determine last completed task from merge history (highest Task ID seen):
-    - Run: `git log --first-parent origin/${defaultBranch} --grep='^T[0-9]\{2,\}:' --pretty='%s'`
-    - Extract Task IDs (regex `^T(\d+):` case-insensitive). Keep the largest numeric N (e.g., T07 => 7).
-    - If none found, set lastDone = 0.
+    - Search full commit messages (subject + body), case-insensitive, for any `TNN:` token:
+      `git log --first-parent origin/${defaultBranch} --pretty='%B' \
+        | grep -iEo 'T[0-9]{2,}:' \
+        | sed -E 's/^[Tt]0*([0-9]+):/\1/' \
+        | sort -n | tail -1`
+    - Treat the result as the numeric Task ID (e.g., `T07:` → `7`).  
+      If the command returns nothing, set `lastDone = 0`.
 
 3) Read `.spec/tasks.json` (array ordered in intended sequence).
     - Extract Task IDs as numbers (T01→1, T12→12).
