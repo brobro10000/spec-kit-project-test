@@ -9,7 +9,7 @@
     "dev:server": "nodemon server/server.ts",
     "build": "tsc -b && vite build",
     "build:server": "tsc -p server/tsconfig.json",
-    "start": "npm run build && npm run start:server",
+    "start": "npm run build && npm run build:server && npm run start:server",
     "start:server": "node server/dist/server.js",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
