@@ -1,0 +1,43 @@
+name: CI - Lint, Type Check, and Tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type Check
+        run: npm run type-check
+
+      - name: Frontend tests (Vitest)
+        run: npm run test -- --run
+
+      - name: Backend tests (if present)
+        shell: bash
+        run: |
+          if npm run -s | grep -q "test:backend"; then
+            echo "Running backend tests via npm run test:backend";
+            npm run test:backend;
+          else
+            echo "No backend test script defined; skipping backend tests.";
+          fi
