@@ -118,6 +118,9 @@ This is a React application built with Vite and TypeScript, featuring a Node.js 
 - Use @mantine/form for simple forms; combine with existing validators if needed.
 - Use @mantine/notifications for toasts and @mantine/modals for confirmations.
 - Keep tokens in `src/theme/mantine.ts`; avoid ad-hoc CSS.
+- App root must wrap with MantineProvider, ModalsProvider, and Notifications; import `@mantine/*/styles.css` in `src/main.tsx`.
+- Persist color scheme per session via `createSessionStorageColorSchemeManager` using `THEME_STORAGE_KEY`.
+- Provide a visible color scheme toggle in the header for pages using AppShell.
 
 ## Testing Strategy
 - Unit tests for utilities and hooks

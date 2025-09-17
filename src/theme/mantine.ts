@@ -1,7 +1,7 @@
 // Mantine theme tokens for the app
 // Keep tokens minimal and centralized so components reference them instead of ad-hoc values
 
-import { createTheme, MantineColorsTuple } from '@mantine/core';
+import {createTheme, type MantineColorsTuple} from '@mantine/core';
 
 // Example custom primary color (blue-ish)
 const brand: MantineColorsTuple = [
