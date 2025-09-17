@@ -15,7 +15,8 @@
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "type-check": "tsc --noEmit",
     "preview": "vite preview",
-    "test": "echo \"No tests specified\" && exit 0",
+    "test": "vitest",
+    "test:ui": "vitest --environment jsdom",
     "spec:pack": "node .spec/scripts/pack-context.js",
     "spec:gen": "uvx --from git+https://github.com/github/spec-kit.git specify tasks --format json > .spec/_gen_tasks.json",
     "spec:diff": "diff -u .spec/tasks.json .spec/_gen_tasks.json || (echo '\\n❌ Spec tasks changed. Run `npm run spec:update` if you INTEND to accept the changes.' && exit 1)",
@@ -23,6 +24,12 @@
     "ai:pack": "node .ai/bin/pack-context.js"
   },
   "dependencies": {
+    "@mantine/core": "^7.14.2",
+    "@mantine/form": "^7.14.2",
+    "@mantine/hooks": "^7.14.2",
+    "@mantine/modals": "^7.14.2",
+    "@mantine/notifications": "^7.14.2",
+    "@tabler/icons-react": "^3.27.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "react": "^19.1.1",
@@ -30,6 +37,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.1",
@@ -44,10 +54,12 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
+    "jsdom": "^25.0.1",
     "nodemon": "^3.1.10",
     "tsx": "^4.20.5",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
-    "vite": "^7.1.2"
+    "vite": "^7.1.2",
+    "vitest": "^2.1.5"
   }
 }
